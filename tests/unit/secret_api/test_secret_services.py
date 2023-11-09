@@ -1,6 +1,11 @@
 from datetime import datetime, timedelta
 
-from api.secret.services import calculate_ttl, generate_random_number, encode_data, decode_data
+from api.secret.services import (
+    calculate_ttl,
+    generate_random_number,
+    encode_data,
+    decode_data,
+)
 
 
 class TestSecretServices:

@@ -3,8 +3,18 @@ from fastapi.exceptions import HTTPException
 
 from api.secret.router import secret_router
 from api.secret.models import Secret
-from api.secret.schemas import SecretCreateIn, SecretCreateOut, SecretReviewIn, SecretReviewOut
-from api.secret.services import calculate_ttl, generate_random_number, encode_data, decode_data
+from api.secret.schemas import (
+    SecretCreateIn,
+    SecretCreateOut,
+    SecretReviewIn,
+    SecretReviewOut,
+)
+from api.secret.services import (
+    calculate_ttl,
+    generate_random_number,
+    encode_data,
+    decode_data,
+)
 
 
 @secret_router.get("/review_secrets/", status_code=200)
@@ -30,7 +40,7 @@ async def create_secret(request: SecretCreateIn) -> dict:
         password=encode_data(request.password),
         ttl=calculate_ttl(ttl_sec),
         verification_number=generate_random_number(),
-        created_at=datetime.utcnow()
+        created_at=datetime.utcnow(),
     ).create()
 
     response = SecretCreateOut(verification_number=secret.verification_number)
@@ -54,7 +64,9 @@ async def review_secret(number: int, request: SecretReviewIn | None = None) -> d
         if not secret:
             raise HTTPException(status_code=404, detail="data not found")
         if request.password != decode_data(secret.password):
-            raise HTTPException(status_code=403, detail="permission denied, wrong password")
+            raise HTTPException(
+                status_code=403, detail="permission denied, wrong password"
+            )
 
         response = SecretReviewOut(secret_msg=decode_data(secret.secret_msg))
         await secret.delete()

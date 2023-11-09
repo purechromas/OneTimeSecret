@@ -13,7 +13,9 @@ async def get_mongo_db_client(mongo_db_url: str) -> AsyncIOMotorClient:
     return db_client
 
 
-async def get_mongo_db(db_client: AsyncIOMotorClient, db_name: str) -> AsyncIOMotorDatabase:
+async def get_mongo_db(
+    db_client: AsyncIOMotorClient, db_name: str
+) -> AsyncIOMotorDatabase:
     """
     With motor db we can make a cursor connection,
     we can create or drop a mongo collections and also get specific collections.
