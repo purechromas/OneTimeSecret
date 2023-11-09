@@ -16,7 +16,7 @@ def generate_random_number() -> int:
     """
     Generate a random number witch we use to check if there is a specific secret in your database.
     """
-    number = int(''.join(str(random.randint(1, 9)) for _ in range(8)))
+    number = int("".join(str(random.randint(1, 9)) for _ in range(8)))
     return number
 
 

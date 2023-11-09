@@ -25,8 +25,12 @@ MONGO_DB_USERNAME: str = os.getenv("MONGO_DB_USERNAME")
 MONGO_DB_PASSWORD: str = os.getenv("MONGO_DB_PASSWORD")
 REAL_MONGO_DB_NAME: str = os.getenv("REAL_MONGO_DB_NAME")
 TEST_MONGO_DB_NAME: str = os.getenv("TEST_MONGO_DB_NAME")
-MONGO_DB_LOCAL_URL_DOCKER: str = f"mongodb://{MONGO_DB_USERNAME}:{MONGO_DB_PASSWORD}@mongodb:27017"
-MONGO_DB_LOCAL_URL_TEST: str = f"mongodb://{MONGO_DB_USERNAME}:{MONGO_DB_PASSWORD}@localhost:27017"
+MONGO_DB_LOCAL_URL_DOCKER: str = (
+    f"mongodb://{MONGO_DB_USERNAME}:{MONGO_DB_PASSWORD}@mongodb:27017"
+)
+MONGO_DB_LOCAL_URL_TEST: str = (
+    f"mongodb://{MONGO_DB_USERNAME}:{MONGO_DB_PASSWORD}@localhost:27017"
+)
 
 # MongoDB cloud
 MONGO_DB_CLOUD_URL: str = os.getenv("MONGO_DB_CLOUD_URL")
@@ -44,5 +48,5 @@ cipher_suite = Fernet(KEY)
 scheduler = AsyncIOScheduler()
 scheduler.add_job(
     find_expired_secrets,
-    CronTrigger(hour=23, minute=0, second=0, timezone=timezone.utc)
+    CronTrigger(hour=23, minute=0, second=0, timezone=timezone.utc),
 )
