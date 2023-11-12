@@ -48,5 +48,5 @@ cipher_suite = Fernet(KEY)
 scheduler = AsyncIOScheduler()
 scheduler.add_job(
     find_expired_secrets,
-    CronTrigger(hour=24, minute=0, second=0, timezone=timezone.utc),
+    CronTrigger(hour=0, minute=0, second=0, timezone=timezone.utc),
 )
