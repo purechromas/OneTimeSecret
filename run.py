@@ -12,3 +12,7 @@ def init_app() -> FastAPI:
 
 
 my_app: FastAPI = init_app()
+
+if __name__ == '__main__':
+    import uvicorn
+    uvicorn.run(app='run:my_app')
