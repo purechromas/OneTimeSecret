@@ -2,7 +2,7 @@ import asyncio
 import pytest
 from httpx import AsyncClient
 from config.mongodb import get_mongo_db_client, get_mongo_db, init_beanie_odm
-from config.settings import MONGO_DB_LOCAL_URL_TEST, TEST_MONGO_DB_NAME
+from config.settings import settings
 from run import init_app
 
 
@@ -20,12 +20,12 @@ async def create_and_drop_test_db() -> None:
     We are using MotorDriver and BeanieODM for creating a connection
     and init a db before we start the session and after session we drop the db.
     """
-    db_client = await get_mongo_db_client(mongo_db_url=MONGO_DB_LOCAL_URL_TEST)
-    database = await get_mongo_db(db_client=db_client, db_name=TEST_MONGO_DB_NAME)
+    db_client = await get_mongo_db_client(mongo_db_url=settings.MONGO.URL_LOCAL)
+    database = await get_mongo_db(db_client=db_client, db_name=settings.MONGO.TEST_DB_NAME)
 
     await init_beanie_odm(database=database)
     yield
-    await db_client.drop_database(TEST_MONGO_DB_NAME)
+    await db_client.drop_database(settings.MONGO.TEST_DB_NAME)
 
 
 @pytest.fixture(scope="session")

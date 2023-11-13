@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
 
 from config.mongodb import get_mongo_db_client, get_mongo_db, init_beanie_odm
-from config.settings import scheduler, REAL_MONGO_DB_NAME, MONGO_DB_URL
+from config.settings import scheduler, settings
 
 
 @asynccontextmanager
@@ -18,9 +18,9 @@ async def lifespan(app: FastAPI) -> None:
     scheduler.start()
 
     # Initialize MongoDB using the provided mongo_url and mongo_name
-    db_client: AsyncIOMotorClient = await get_mongo_db_client(mongo_db_url=MONGO_DB_URL)
+    db_client: AsyncIOMotorClient = await get_mongo_db_client(mongo_db_url=settings.MONGO.URL_DOCKER)
     database: AsyncIOMotorDatabase = await get_mongo_db(
-        db_client=db_client, db_name=REAL_MONGO_DB_NAME
+        db_client=db_client, db_name=settings.MONGO.REAL_DB_NAME
     )
     await init_beanie_odm(database=database)
     yield
