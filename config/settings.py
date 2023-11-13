@@ -1,47 +1,53 @@
 import base64
 import hashlib
-import os
 from datetime import timezone
+from pathlib import Path
 from cryptography.fernet import Fernet
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
-from dotenv import load_dotenv
+from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import Field
 
 from api.secret.task import find_expired_secrets
 
-# Loading all
-load_dotenv()
+BASE_DIR: Path = Path(__file__).resolve().parent.parent
 
-# Secret app key
-SECRET_KEY: str = os.getenv("SECRET_KEY")
 
-# App settings
-DEBUG: bool = True
-HOST: str = "localhost"
-PORT: int = 8000
+class ConfigSettings(BaseSettings):
+    model_config = SettingsConfigDict(env_file=BASE_DIR / '.env', env_file_encoding='utf-8', extra='ignore')
 
-# MongoDB local
-MONGO_DB_USERNAME: str = os.getenv("MONGO_DB_USERNAME")
-MONGO_DB_PASSWORD: str = os.getenv("MONGO_DB_PASSWORD")
-REAL_MONGO_DB_NAME: str = os.getenv("REAL_MONGO_DB_NAME")
-TEST_MONGO_DB_NAME: str = os.getenv("TEST_MONGO_DB_NAME")
-MONGO_DB_LOCAL_URL_DOCKER: str = (
-    f"mongodb://{MONGO_DB_USERNAME}:{MONGO_DB_PASSWORD}@mongodb:27017"
-)
-MONGO_DB_LOCAL_URL_TEST: str = (
-    f"mongodb://{MONGO_DB_USERNAME}:{MONGO_DB_PASSWORD}@localhost:27017"
-)
 
-# MongoDB cloud
-MONGO_DB_CLOUD_URL: str = os.getenv("MONGO_DB_CLOUD_URL")
+class AppSettings(ConfigSettings):
+    SECRET_KEY: str = Field(alias="APP_SECRET_KEY")
+    DEBUG: bool = True
+    HOST: str = "localhost"
+    PORT: int = 8001
 
-if DEBUG:
-    MONGO_DB_URL = MONGO_DB_LOCAL_URL_DOCKER
-else:
-    MONGO_DB_URL = MONGO_DB_CLOUD_URL
+
+class MongoSettings(ConfigSettings):
+    USERNAME: str = Field(alias='MONGO_USERNAME')
+    PASSWORD: str = Field(alias='MONGO_PASSWORD')
+    REAL_DB_NAME: str = Field(alias='MONGO_REAL_DB_NAME')
+    TEST_DB_NAME: str = Field(alias='MONGO_TEST_DB_NAME')
+    URL_CLOUD: str = Field(alias="MONGO_URL_CLOUD")
+    URL_LOCAL: str = Field(default=None, validate_default=False)
+    URL_DOCKER: str = Field(default=None, validate_default=False)
+
+    def __init__(self):
+        super().__init__()
+        self.URL_LOCAL = f"mongodb://{self.USERNAME}:{self.PASSWORD}@localhost:27017"
+        self.URL_DOCKER = f"mongodb://{self.USERNAME}:{self.PASSWORD}@mongodb:27017"
+
+
+class Settings(BaseSettings):
+    APP: AppSettings = AppSettings()
+    MONGO: MongoSettings = MongoSettings()
+
+
+settings = Settings()
 
 # Encoder-Decoder settings
-KEY = base64.urlsafe_b64encode(hashlib.sha256(SECRET_KEY.encode()).digest())
+KEY = base64.urlsafe_b64encode(hashlib.sha256(settings.APP.SECRET_KEY.encode()).digest())
 cipher_suite = Fernet(KEY)
 
 # Async Scheduler settings
