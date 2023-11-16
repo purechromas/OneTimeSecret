@@ -17,7 +17,7 @@ from api.secret.utils import (
 )
 
 
-async def get_secrets_from_db() -> list[Secret]:
+async def review_secrets_from_db() -> list[Secret]:
     secrets = await Secret.find_all().to_list()
     return secrets
 
@@ -40,7 +40,7 @@ async def create_secret_in_db(
     return response
 
 
-async def get_secret_from_db(
+async def review_secret_from_db(
     verification_number: Annotated[int | None, Path],
     request: Annotated[SecretReviewIn | None, Body] = None,
 ) -> SecretReviewOut:

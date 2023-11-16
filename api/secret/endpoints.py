@@ -3,8 +3,8 @@ from typing import Annotated
 
 from api.secret.dependencies import (
     create_secret_in_db,
-    get_secrets_from_db,
-    get_secret_from_db,
+    review_secrets_from_db,
+    review_secret_from_db,
 )
 from api.secret.router import secret_router
 from api.secret.models import Secret
@@ -16,7 +16,7 @@ from api.secret.schemas import (
 
 @secret_router.get("/review_secrets/", status_code=200)
 async def review_secrets(
-    secrets: Annotated[Secret, Depends(get_secrets_from_db)]
+    secrets: Annotated[Secret, Depends(review_secrets_from_db)]
 ) -> dict:
     """
     This endpoint help us find all Secrets in our db.
@@ -38,7 +38,7 @@ async def create_secret(
 
 @secret_router.post("/review_secret/{verification_number}/", status_code=200)
 async def review_secret(
-    secret: Annotated[SecretReviewOut, Depends(get_secret_from_db)]
+    secret: Annotated[SecretReviewOut, Depends(review_secret_from_db)]
 ) -> dict:
     """
     This endpoint is helping us find specific secret by verification number
