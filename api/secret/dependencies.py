@@ -14,7 +14,7 @@ async def get_secrets_from_db() -> list[Secret]:
 
 
 async def create_secret_in_db(
-        request: Annotated[SecretCreateIn, Body]
+    request: Annotated[SecretCreateIn, Body]
 ) -> SecretCreateOut:
     ttl_sec = request.ttl
 
@@ -32,8 +32,8 @@ async def create_secret_in_db(
 
 
 async def get_secret_from_db(
-        verification_number: Annotated[int | None, Path],
-        request: Annotated[SecretReviewIn | None, Body] = None
+    verification_number: Annotated[int | None, Path],
+    request: Annotated[SecretReviewIn | None, Body] = None
 ) -> SecretReviewOut:
     secret = await Secret.find_one(Secret.verification_number == verification_number)
 
