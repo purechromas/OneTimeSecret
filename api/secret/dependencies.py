@@ -1,11 +1,20 @@
 from datetime import datetime
 from typing import Annotated
-
 from fastapi import Path, Body, HTTPException
 
 from api.secret.models import Secret
-from api.secret.schemas import SecretCreateIn, SecretCreateOut, SecretReviewIn, SecretReviewOut
-from api.secret.utils import encode_data, calculate_ttl, generate_random_number, decode_data
+from api.secret.schemas import (
+    SecretCreateIn,
+    SecretCreateOut,
+    SecretReviewIn,
+    SecretReviewOut,
+)
+from api.secret.utils import (
+    encode_data,
+    calculate_ttl,
+    generate_random_number,
+    decode_data,
+)
 
 
 async def get_secrets_from_db() -> list[Secret]:
@@ -33,7 +42,7 @@ async def create_secret_in_db(
 
 async def get_secret_from_db(
     verification_number: Annotated[int | None, Path],
-    request: Annotated[SecretReviewIn | None, Body] = None
+    request: Annotated[SecretReviewIn | None, Body] = None,
 ) -> SecretReviewOut:
     secret = await Secret.find_one(Secret.verification_number == verification_number)
 
