@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from api.secret.services import (
+from api.secret.utils import (
     calculate_ttl,
     generate_random_number,
     encode_data,
